@@ -10,7 +10,10 @@ export default defineConfig({
   plugins: [
     vue(),
     vueDevTools(),
-    vuetify({ autoImport: true }), // 自動載入 Vuetify 元件與樣式
+    vuetify({
+      // 自動載入 Vuetify 元件與樣式
+      autoImport: true
+    }),
   ],
   resolve: {
     alias: {
