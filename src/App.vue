@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted } from 'vue'
-import { getPopularMovies } from './api/tmdb'
+import { getPopularMovies } from '@/api/tmdb'
 
 
 const fetchMovie = async() => {
