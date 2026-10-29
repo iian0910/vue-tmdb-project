@@ -1,4 +1,21 @@
-<script setup></script>
+<script setup>
+import { onMounted } from 'vue'
+import { getPopularMovies } from './api/tmdb'
+
+
+const fetchMovie = async() => {
+  try {
+    const res = await getPopularMovies()
+    console.log('getPopularMovies', res.data.results)
+  } catch (error) {
+    console.log(error)
+  }
+}
+onMounted(() => {
+  fetchMovie()
+})
+
+</script>
 
 <template>
   <h1>You did it!</h1>
