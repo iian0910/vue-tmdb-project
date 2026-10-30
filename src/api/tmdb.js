@@ -18,3 +18,7 @@ export const getNowPlayingMovies = (page = 1) => {
     params: { page }
   })
 }
+
+export const getMovieDetail = (movie_id) => {
+  return tmdbClient.get(`/movie/${movie_id}`)
+}

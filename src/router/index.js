@@ -12,6 +12,11 @@ const router = createRouter({
       path: '/popularMovieList',
       name: 'PopularMovie',
       component: () => import('@/pages/popularMovie.vue')
+    },
+    {
+      path: '/movie/:id',
+      name: 'MovieDetailInfo',
+      component: () => import('@/pages/movieDetailInfo.vue')
     }
   ],
 })

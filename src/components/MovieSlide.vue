@@ -31,6 +31,12 @@ const getMovieList = async() => {
 const goToPopularList = () => {
   router.push('/popularMovieList')
 }
+const goToDetail = (id) => {
+  router.push({
+    name: 'MovieDetailInfo',
+    params: { id }
+  })
+}
 
 // mounted
 onMounted(() => {
@@ -57,6 +63,7 @@ onMounted(() => {
           width="260"
           elevation="2"
           rounded="xl"
+          @click="goToDetail(movie.id)"
         >
           <v-img
             :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"

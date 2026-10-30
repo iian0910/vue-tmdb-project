@@ -1,8 +1,7 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import { getPopularMovies } from '@/api/tmdb.js'
-
-import router from '@/router'
+import BackPage from '../components/BackPage.vue'
 
 // data
 const movieList = ref([])
@@ -25,9 +24,6 @@ const getMovieList = async(page = 1) => {
     console.log(error)
   }
 }
-const backHome = () => {
-  router.push('/')
-}
 
 // mounted
 onMounted(() => {
@@ -37,19 +33,7 @@ onMounted(() => {
 
 <template>
   <v-container>
-    <v-toolbar style="background-color: transparent;">
-      <template v-slot:prepend>
-        <v-btn
-          prepend-icon="mdi-arrow-left"
-          @click="backHome"
-        >
-          <template v-slot:prepend>
-            <v-icon color="white"></v-icon>
-          </template>
-          <span class="text-white">返回</span>
-        </v-btn>
-      </template>
-    </v-toolbar>
+    <BackPage />
     <v-row>
       <v-col
         cols="12"
