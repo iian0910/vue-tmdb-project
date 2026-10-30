@@ -2,8 +2,10 @@
 import { onMounted, ref } from 'vue'
 import { getPopularMovies } from '@/api/tmdb.js'
 import { useWindowSize } from '@/composables/useDeviceSize'
+import { useRouter } from 'vue-router';
 
 const { isMobile } = useWindowSize()
+const router = useRouter()
 
 // props
 const props = defineProps({
@@ -25,6 +27,9 @@ const getMovieList = async() => {
   } catch (error) {
     console.log(error)
   }
+}
+const goToPopularList = () => {
+  router.push('/popularMovieList')
 }
 
 // mounted
@@ -59,6 +64,20 @@ onMounted(() => {
           />
         </v-card>
       </v-slide-group-item>
+      <v-slide-group-item>
+        <v-card
+          class="poster-container more ma-3"
+          color="grey-lighten-4"
+          width="260"
+          elevation="2"
+          rounded="xl"
+          @click="goToPopularList"
+        >
+          <div class="d-flex justify-center h-100">
+            <p class="text-body-large align-self-center text-white">看更多...</p>
+          </div>
+        </v-card>
+      </v-slide-group-item>
     </v-slide-group>
   </div>
 </template>
@@ -68,13 +87,16 @@ onMounted(() => {
   /* 設定標準海報比例 2:3 */
   aspect-ratio: 2 / 3;
   overflow: hidden;
-  background-color: #2d3748; /* 圖片載入前的占位底色 */
+  background-color: transparent;
+
+  &.more {
+    background-color: #2d3748;
+  }
 }
 
 .poster-img {
   width: 100%;
   height: 100%;
-  /* 關鍵：等比縮放填滿容器，超出部分自動裁切，不會被拉伸扁平 */
   object-fit: cover;
   display: block;
 }

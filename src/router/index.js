@@ -7,6 +7,11 @@ const router = createRouter({
       path: '/',
       name: 'Home',
       component: () => import('@/pages/home.vue')
+    },
+    {
+      path: '/popularMovieList',
+      name: 'PopularMovie',
+      component: () => import('@/pages/popularMovie.vue')
     }
   ],
 })
