@@ -6,9 +6,7 @@ import Home from './pages/home.vue';
 <template>
   <v-app>
     <v-main>
-      <v-container style="max-width: 1200px;">
-        <Home />
-      </v-container>
+      <Home />
     </v-main>
   </v-app>
 </template>

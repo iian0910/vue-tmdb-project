@@ -7,7 +7,7 @@ import { createVuetify } from 'vuetify'
 const myCustomLightTheme = {
   dark: false, // 是否為深色主題
   colors: {
-    background: '#FFFFFF',
+    background: '#000000',
     surface: '#FFFFFF',
     primary: '#6200EE',      // 主色
     'primary-darken-1': '#3700B3',
