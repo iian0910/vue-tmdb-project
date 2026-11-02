@@ -1,6 +1,6 @@
 <script setup>
 import { getMovieDetail } from '@/api/tmdb'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import BackPage from '../components/BackPage.vue'
 import { useRoute } from 'vue-router'
 
@@ -8,6 +8,9 @@ const route = useRoute()
 
 // data
 const detail = ref({})
+
+// computed
+const voteAverage = computed(() => detail.value.vote_average * 10)
 
 // methods
 const getDetail = async(id) => {
@@ -47,6 +50,18 @@ onMounted(() => {
     <BackPage />
     <v-row>
       <v-col cols="12" lg="4">
+        <img width="100%" :src="`https://image.tmdb.org/t/p/w500${detail.poster_path}`" :alt="detail.title">
+      </v-col>
+      <v-col cols="12" lg="5">
+        <p class="text-label-large">名稱：</p>
+        <p class="text-title-medium">{{detail.title}}</p>
+        <p class="text-label-large">概要：</p>
+        <p class="text-body-medium">{{detail.overview}}</p>
+        <p class="text-label-large">語系：</p>
+        <p class="text-body-medium">{{detail.original_language}}</p>
+        <p class="text-label-large">上映日期：</p>
+        <p class="text-body-medium">{{detail.release_date}}</p>
+        <p class="text-label-large">分類標籤：</p>
         <div>
           <v-chip
             class="mx-1 mb-3"
@@ -58,21 +73,21 @@ onMounted(() => {
             {{chip.name}}
           </v-chip>
         </div>
-        <img width="100%" :src="`https://image.tmdb.org/t/p/w500${detail.poster_path}`" :alt="detail.title">
       </v-col>
-      <v-col cols="12" lg="4">
-        <p class="text-label-large">名稱：</p>
-        <p class="text-title-medium">{{detail.title}}</p>
-        <p class="text-label-large">概要：</p>
-        <p class="text-body-medium">{{detail.overview}}</p>
-        <p class="text-label-large">語系：</p>
-        <p class="text-body-medium">{{detail.original_language}}</p>
-        <p class="text-label-large">上映日期：</p>
-        <p class="text-body-medium">{{detail.release_date}}</p>
-      </v-col>
-      <v-col cols="12" lg="4">
+      <v-col cols="12" lg="3">
         <p class="text-label-large">影評得分</p>
-        <p class="text-headline-large">{{detail.vote_average}}</p>
+        <v-progress-circular
+            :model-value="voteAverage"
+            :size="100"
+            :width="12"
+            bg-color="surface-light"
+            class="ma-3"
+            color="orange-accent-2"
+            reveal
+            rounded
+          >
+            <v-avatar color="surface-light" size="70">{{ detail.vote_average }}</v-avatar>
+          </v-progress-circular>
       </v-col>
     </v-row>
   </v-container>
