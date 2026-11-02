@@ -2,6 +2,11 @@
 import { onMounted, ref, watch } from 'vue'
 import { getPopularMovies } from '@/api/tmdb.js'
 import BackPage from '../components/BackPage.vue'
+import { useLoadingStore } from '@/stores/loading'
+import { storeToRefs } from 'pinia'
+
+const loadingStore = useLoadingStore()
+const { isLoading } = storeToRefs(loadingStore)
 
 // data
 const movieList = ref([])
@@ -15,14 +20,12 @@ watch(currentPage, (newPage) => {
 
 // methods
 const getMovieList = async(page = 1) => {
-  try {
+  await loadingStore.withLoading(async() => {
     const { data } = await getPopularMovies(page)
     movieList.value = data.results
     listTotalPage.value = data.total_pages
     currentPage.value = data.page
-  } catch (error) {
-    console.log(error)
-  }
+  })
 }
 
 // mounted
@@ -33,7 +36,7 @@ onMounted(() => {
 
 <template>
   <v-container>
-    <BackPage />
+    <BackPage v-if="!isLoading"/>
     <v-row>
       <v-col
         cols="12"

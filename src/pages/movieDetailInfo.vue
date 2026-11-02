@@ -3,6 +3,9 @@ import { getMovieDetail } from '@/api/tmdb'
 import { computed, onMounted, ref } from 'vue'
 import BackPage from '../components/BackPage.vue'
 import { useRoute } from 'vue-router'
+import { useLoadingStore } from '@/stores/loading'
+
+const loadingStore = useLoadingStore()
 
 const route = useRoute()
 
@@ -14,13 +17,10 @@ const voteAverage = computed(() => detail.value.vote_average * 10)
 
 // methods
 const getDetail = async(id) => {
-  try {
+  await loadingStore.withLoading(async() => {
     const { data } = await getMovieDetail(id)
     detail.value = data
-    console.log(detail.value)
-  } catch (error) {
-    console.log(error)
-  }
+  })
 }
 
 // mounted
@@ -47,7 +47,7 @@ onMounted(() => {
     </v-container>
   </v-card>
   <v-container>
-    <BackPage />
+    <BackPage v-if="!isLoading"/>
     <v-row>
       <v-col cols="12" lg="4">
         <img width="100%" :src="`https://image.tmdb.org/t/p/w500${detail.poster_path}`" :alt="detail.title">
@@ -77,17 +77,17 @@ onMounted(() => {
       <v-col cols="12" lg="3">
         <p class="text-label-large">影評得分</p>
         <v-progress-circular
-            :model-value="voteAverage"
-            :size="100"
-            :width="12"
-            bg-color="surface-light"
-            class="ma-3"
-            color="orange-accent-2"
-            reveal
-            rounded
-          >
-            <v-avatar color="surface-light" size="70">{{ detail.vote_average }}</v-avatar>
-          </v-progress-circular>
+          :model-value="voteAverage"
+          :size="200"
+          :width="15"
+          bg-color="surface-light"
+          class="ma-3"
+          color="orange-accent-2"
+          reveal
+          rounded
+        >
+          <v-avatar color="surface-light" size="150" class="text-display-medium">{{ detail.vote_average }}</v-avatar>
+        </v-progress-circular>
       </v-col>
     </v-row>
   </v-container>

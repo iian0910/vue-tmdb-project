@@ -3,6 +3,9 @@
 import { getNowPlayingMovies } from '@/api/tmdb'
 import { onMounted, ref } from 'vue'
 import { useWindowSize } from '@/composables/useDeviceSize'
+import { useLoadingStore } from '@/stores/loading'
+
+const loadingStore = useLoadingStore()
 
 const { isMobile } = useWindowSize()
 
@@ -13,12 +16,10 @@ const nowList = ref([])
 
 // methods
 const nowPlayingMovies = async() => {
-  try {
+  await loadingStore.withLoading(async() => {
     const { data } = await getNowPlayingMovies()
     nowList.value = data.results.slice(0, 10)
-  } catch (error) {
-    console.log(error)
-  }
+  })
 }
 
 // mounted
