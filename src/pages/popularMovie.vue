@@ -4,9 +4,11 @@ import { getPopularMovies } from '@/api/tmdb.js'
 import BackPage from '../components/BackPage.vue'
 import { useLoadingStore } from '@/stores/loading'
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 
 const loadingStore = useLoadingStore()
 const { isLoading } = storeToRefs(loadingStore)
+const router = useRouter()
 
 // data
 const movieList = ref([])
@@ -25,6 +27,13 @@ const getMovieList = async(page = 1) => {
     movieList.value = data.results
     listTotalPage.value = data.total_pages
     currentPage.value = data.page
+  })
+}
+
+const goToDetail = (id) => {
+  router.push({
+    name: 'MovieDetailInfo',
+    params: { id }
   })
 }
 
@@ -50,6 +59,7 @@ onMounted(() => {
           color="grey-lighten-4"
           elevation="2"
           rounded="xl"
+          @click="goToDetail(movie.id)"
         >
           <v-img
             :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"

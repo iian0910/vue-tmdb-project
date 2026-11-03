@@ -4,10 +4,11 @@ import { getNowPlayingMovies } from '@/api/tmdb'
 import { onMounted, ref } from 'vue'
 import { useWindowSize } from '@/composables/useDeviceSize'
 import { useLoadingStore } from '@/stores/loading'
+import { useRouter } from 'vue-router'
 
 const loadingStore = useLoadingStore()
-
 const { isMobile } = useWindowSize()
+const router = useRouter()
 
 // data
 const nowList = ref([])
@@ -19,6 +20,13 @@ const nowPlayingMovies = async() => {
   await loadingStore.withLoading(async() => {
     const { data } = await getNowPlayingMovies()
     nowList.value = data.results.slice(0, 10)
+  })
+}
+
+const goToDetail = (id) => {
+  router.push({
+    name: 'MovieDetailInfo',
+    params: { id }
   })
 }
 
@@ -48,11 +56,21 @@ onMounted(() => {
         cover
       >
         <div class="carousel-gradient-overlay d-flex align-end">
-          <!-- 放置文字或按鈕區域 -->
-          <div class="movie-info text-white px-10 mb-10">
-            <h3 class="text-headline-small text-md-headline-large font-weight-bold mb-3">{{movie.title}}</h3>
-            <p class="text-body-medium text-md-body-large overview-text">{{movie.overview || '目前無電影描述'}}</p>
-          </div>
+          <v-container>
+            <div class="text-white movie-info">
+              <h3 class="text-headline-small text-md-headline-large font-weight-bold mb-3">{{movie.title}}</h3>
+              <p class="text-body-medium text-md-body-large overview-text">{{movie.overview || '目前無電影描述'}}</p>
+              <v-btn
+                variant="outlined"
+                color="secondary"
+                size="x-large"
+                class="rounded-pill mt-5"
+                @click="goToDetail(movie.id)"
+              >
+                詳細介紹
+              </v-btn>
+            </div>
+          </v-container>
         </div>
       </v-carousel-item>
     </v-carousel>
@@ -81,7 +99,13 @@ onMounted(() => {
 }
 
 .movie-info {
-  max-width: 550px;
+  width: 550px;
+  margin-bottom: 150px;
+
+  @media (max-width: 500px) {
+    width: 100%;
+    margin-bottom: 0px;
+  }
 }
 
 .overview-text {

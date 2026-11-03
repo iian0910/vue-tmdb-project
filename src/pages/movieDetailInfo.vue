@@ -4,16 +4,17 @@ import { computed, onMounted, ref } from 'vue'
 import BackPage from '../components/BackPage.vue'
 import { useRoute } from 'vue-router'
 import { useLoadingStore } from '@/stores/loading'
+import { storeToRefs } from 'pinia'
 
 const loadingStore = useLoadingStore()
-
+const { isLoading } = storeToRefs(loadingStore)
 const route = useRoute()
 
 // data
 const detail = ref({})
 
 // computed
-const voteAverage = computed(() => detail.value.vote_average * 10)
+const progressBarLevel = computed(() => (detail.value?.vote_average || 0) * 10)
 
 // methods
 const getDetail = async(id) => {
@@ -77,7 +78,7 @@ onMounted(() => {
       <v-col cols="12" lg="3">
         <p class="text-label-large">影評得分</p>
         <v-progress-circular
-          :model-value="voteAverage"
+          :model-value="progressBarLevel"
           :size="200"
           :width="15"
           bg-color="surface-light"
@@ -86,7 +87,7 @@ onMounted(() => {
           reveal
           rounded
         >
-          <v-avatar color="surface-light" size="150" class="text-display-medium">{{ detail.vote_average }}</v-avatar>
+          <v-avatar color="surface-light" size="150" class="text-display-medium">{{ detail?.vote_average?.toFixed(2) || '0.00' }}</v-avatar>
         </v-progress-circular>
       </v-col>
     </v-row>
