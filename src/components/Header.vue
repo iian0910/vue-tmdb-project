@@ -27,7 +27,9 @@ const logout = async() => {
     class="border-b-md
     border-surface"
   >
-    <v-app-bar-title>TMDB 影視館</v-app-bar-title>
+    <v-app-bar-title>
+      <router-link to="/" class="text-decoration-none text-white">TMDB 影視館</router-link>
+    </v-app-bar-title>
 
     <v-btn
       v-if="authStore.isLogin"
