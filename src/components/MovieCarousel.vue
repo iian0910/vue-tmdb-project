@@ -1,46 +1,32 @@
 <script setup>
-
-import { getNowPlayingMovies } from '@/api/tmdb'
-import { onMounted, ref } from 'vue'
 import { useWindowSize } from '@/composables/useDeviceSize'
-import { useLoadingStore } from '@/stores/loading'
 import { useRouter } from 'vue-router'
 
-const loadingStore = useLoadingStore()
 const { isMobile } = useWindowSize()
 const router = useRouter()
 
-// data
-const nowList = ref([])
-
-// computed
+// props
+const props = defineProps({
+  moveList: {
+    type: Array,
+    default: () => ([])
+  }
+})
 
 // methods
-const nowPlayingMovies = async() => {
-  await loadingStore.withLoading(async() => {
-    const { data } = await getNowPlayingMovies()
-    nowList.value = data.results.slice(0, 10)
-  })
-}
-
 const goToDetail = (id) => {
   router.push({
     name: 'MovieDetailInfo',
     params: { id }
   })
 }
-
-// mounted
-onMounted(() => {
-  nowPlayingMovies()
-})
 </script>
 
 <template>
   <div class="pa-4">
     <v-carousel
       class="rounded-xl"
-      v-if="nowList.length > 0"
+      v-if="moveList.length > 0"
       hide-delimiters
       :show-arrows="false"
       :height="isMobile ? '600' : '800'"
@@ -50,7 +36,7 @@ onMounted(() => {
       crossfade
     >
       <v-carousel-item
-        v-for="(movie, i) in nowList"
+        v-for="(movie, i) in moveList"
         :key="i"
         :src="`https://image.tmdb.org/t/p/w1280${movie.backdrop_path}`"
         cover

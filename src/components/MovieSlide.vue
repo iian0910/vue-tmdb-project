@@ -1,36 +1,27 @@
 <script setup>
-import { onMounted, ref } from 'vue'
-import { getPopularMovies } from '@/api/tmdb.js'
+import { ref } from 'vue'
 import { useWindowSize } from '@/composables/useDeviceSize'
 import { useRouter } from 'vue-router'
-import { useLoadingStore } from '@/stores/loading'
-import { storeToRefs } from 'pinia'
-
-const loadingStore = useLoadingStore()
 
 const { isMobile } = useWindowSize()
 const router = useRouter()
-const { isLoading } = storeToRefs(loadingStore)
 
 // props
 const props = defineProps({
   title: {
     type: String,
     default: ''
+  },
+  movieList: {
+    type: Array,
+    default: () => ([])
   }
 })
 
 // data
-const movieList = ref([])
 const selectedCard = ref(null)
 
 // methods
-const getMovieList = async() => {
-  await loadingStore.withLoading(async() => {
-    const { data } = await getPopularMovies()
-    movieList.value = data.results.slice(0, 10)
-  })
-}
 const goToPopularList = () => {
   router.push('/popularMovieList')
 }
@@ -40,16 +31,11 @@ const goToDetail = (id) => {
     params: { id }
   })
 }
-
-// mounted
-onMounted(() => {
-  getMovieList()
-})
 </script>
 
 <template>
   <div>
-    <h1 class="pl-10 mb-0" v-if="!isLoading">{{ title }}</h1>
+    <h1 class="pl-10 mb-0">{{ title }}</h1>
     <v-slide-group
       v-model="selectedCard"
       class="pa-4"
@@ -74,7 +60,7 @@ onMounted(() => {
           />
         </v-card>
       </v-slide-group-item>
-      <v-slide-group-item v-if="!isLoading">
+      <v-slide-group-item>
         <v-card
           class="poster-container more ma-3"
           color="grey-lighten-4"
