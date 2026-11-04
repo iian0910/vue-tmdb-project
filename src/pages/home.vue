@@ -5,45 +5,53 @@ import { getPopularMovies } from '@/api/tmdb.js'
 
 import MovieCarousel from '../components/MovieCarousel.vue'
 import MovieSlide from '@/components/MovieSlide.vue'
-
-import { useLoadingStore } from '@/stores/loading'
-const loadingStore = useLoadingStore()
+import PageLoading from '@/components/PageLoading.vue'
 
 // data
 const nowList = ref([])
 const movieList = ref([])
+const isLoading = ref(false)
 
 // methods
-const nowPlayingMovies = async() => {
-  await loadingStore.withLoading(async() => {
-    const { data } = await getNowPlayingMovies()
-    nowList.value = data.results.slice(0, 10)
-  })
-}
-const getMovieList = async() => {
-  await loadingStore.withLoading(async() => {
-    const { data } = await getPopularMovies()
-    movieList.value = data.results.slice(0, 10)
-  })
+const fetchPageData = async() => {
+  isLoading.value = true
+  try {
+    const [nowMovieList, popularMovieList] = await Promise.all([
+      getNowPlayingMovies(),
+      getPopularMovies()
+    ])
+
+    nowList.value = nowMovieList.data.results.slice(0, 10)
+    movieList.value = popularMovieList.data.results.slice(0, 10)
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isLoading.value = false
+  }
 }
 
 // mounted
 onMounted(() => {
-  nowPlayingMovies()
-  getMovieList()
+  fetchPageData()
 })
 </script>
 
 <template>
-  <MovieCarousel
-    :move-list="nowList"
+  <PageLoading
+    v-if="isLoading"
+    :is-loading="isLoading"
   />
-  <v-container>
-    <MovieSlide
-      title="熱門電影"
-      :movie-list="movieList"
+  <div v-else>
+    <MovieCarousel
+      :move-list="nowList"
     />
-  </v-container>
+    <v-container>
+      <MovieSlide
+        title="熱門電影"
+        :movie-list="movieList"
+      />
+    </v-container>
+  </div>
 </template>
 
 <style lang="scss" scoped>

@@ -10,6 +10,7 @@ const router = createRouter({
       component: () => import('@/pages/login.vue'),
       meta: {
         hideFooter: true,
+        hideHeader: true,
         requiresAuth: false
       }
     },
