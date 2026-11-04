@@ -36,7 +36,7 @@ const login = async() => {
     if (data.success) {
       getLongSession(data.request_token)
     } else {
-      sessionWithExpiry.removeItem('tempToken')
+      sessionStorage.removeItem('tempToken')
     }
   } catch (error) {
     console.log(error)
@@ -51,10 +51,13 @@ const getLongSession = async(token) => {
       authStore.setToken(data.session_id)
       router.push('/')
     } else {
-      sessionWithExpiry.removeItem('tempToken')
+      sessionStorage.removeItem('tempToken')
     }
   } catch (error) {
     console.log(error)
+  } finally {
+    console.log('我有進來!!!')
+    sessionStorage.removeItem('tempToken')
   }
 }
 
