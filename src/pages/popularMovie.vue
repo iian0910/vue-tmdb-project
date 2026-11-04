@@ -1,19 +1,18 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import { getPopularMovies } from '@/api/tmdb.js'
-import BackPage from '../components/BackPage.vue'
-import { useLoadingStore } from '@/stores/loading'
-import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 
-const loadingStore = useLoadingStore()
-const { isLoading } = storeToRefs(loadingStore)
+import BackPage from '../components/BackPage.vue'
+import PageLoading from '@/components/PageLoading.vue'
+
 const router = useRouter()
 
 // data
 const movieList = ref([])
 const listTotalPage = ref(0)
 const currentPage = ref(1)
+const isLoading = ref(false)
 
 // watch
 watch(currentPage, (newPage) => {
@@ -22,12 +21,17 @@ watch(currentPage, (newPage) => {
 
 // methods
 const getMovieList = async(page = 1) => {
-  await loadingStore.withLoading(async() => {
+  isLoading.value = true
+  try {
     const { data } = await getPopularMovies(page)
     movieList.value = data.results
     listTotalPage.value = data.total_pages
     currentPage.value = data.page
-  })
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isLoading.value = false
+  }
 }
 
 const goToDetail = (id) => {
@@ -44,8 +48,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-container>
-    <BackPage v-if="!isLoading"/>
+  <PageLoading
+    v-if="isLoading"
+    :is-loading="isLoading"
+  />
+  <v-container v-else>
+    <BackPage/>
     <v-row>
       <v-col
         cols="12"
