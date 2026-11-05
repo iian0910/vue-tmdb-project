@@ -1,4 +1,5 @@
 import axios from "axios"
+import { TMDB_ERROR_MESSAGES, HTTP_STATUS_MESSAGES } from "@/util/tmdbStatus"
 
 const tmdbClient = axios.create({
   baseURL: '/api/tmdb',
@@ -6,6 +7,42 @@ const tmdbClient = axios.create({
     language: 'zh-TW'
   }
 })
+
+tmdbClient.interceptors.response.use(
+  (response) => {
+    return response
+  },
+  (error) => {
+    console.dir(error)
+    if (error.response) {
+      const httpStatus = error.response.status
+      const responseData = error.response.data || {}
+
+      const tmdbCode = responseData.status_code
+      const serverMessage = responseData.status_message
+
+      const friendlyMessage = TMDB_ERROR_MESSAGES[tmdbCode] || HTTP_STATUS_MESSAGES[httpStatus] || serverMessage || '發生未知錯誤，請稍後再試'
+
+      error.friendlyMessage = friendlyMessage
+      error.tmdbCode = tmdbCode
+
+      console.error(`[TMDB API Error] HTTP ${httpStatus} | 代碼 ${tmdbCode}: ${friendlyMessage}`)
+
+      // 登入失敗或Token過期
+      const authExpiredCodes = [3, 14, 17, 33]
+      if (httpStatus === 401 || authExpiredCodes.includes(tmdbCode)) {
+        sessionStorage.removeItem('session_id')
+        sessionStorage.removeItem('account_id')
+      }
+    } else if (error.request) {
+      error.friendlyMessage = '網路連線異常'
+    } else {
+      error.friendlyMessage = error.message || '發送請求時發生錯誤'
+    }
+
+    return Promise.request(error)
+  }
+)
 
 export const getPopularMovies = (page = 1) => {
   return tmdbClient.get('/movie/popular', {
