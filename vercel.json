@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/tmdb/:path*",
-      "destination": "/api/tmdb"
+      "destination": "https://api.themoviedb.org/3/:path*"
     },
     {
       "source": "/(.*)",
