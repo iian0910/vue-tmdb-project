@@ -3,7 +3,8 @@ import {
   getMovieDetail,
   changeFavoriteStatus,
   getMovieStates,
-  getMovieImgList
+  getMovieImgList,
+  getMovieVideo
 } from '@/api/tmdb'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -18,6 +19,7 @@ const detail = ref({})
 const isLoading = ref(false)
 const isFavoriteMovie = ref(false)
 const imageList = ref([])
+const videoList = ref([])
 
 // computed
 const progressBarLevel = computed(() => (detail.value?.vote_average || 0) * 10)
@@ -31,6 +33,7 @@ const getDetail = async(id) => {
     
     updateMovieDetail(detail.value.id)
     await getMovieImage(detail.value.id)
+    await getVideo(detail.value.id)
   } catch (error) {
     console.log(error)
   } finally {
@@ -69,6 +72,16 @@ const getMovieImage = async(id) => {
   try {
     const { data } = await getMovieImgList(sessionID, id)
     imageList.value = data.posters
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const getVideo = async(id) => {
+  const sessionID = sessionStorage.getItem('session_id')
+  try {
+    const { data } = await getMovieVideo(sessionID, id)
+    videoList.value = data.results
   } catch (error) {
     console.log(error)
   }
@@ -118,15 +131,12 @@ onMounted(() => {
           </v-btn>
         </v-col>
         <v-col cols="12" lg="5">
-          <p class="text-label-large">名稱：</p>
-          <p class="text-title-medium">{{detail.title}}</p>
-          <p class="text-label-large">概要：</p>
-          <p class="text-body-medium">{{detail.overview}}</p>
-          <p class="text-label-large">語系：</p>
-          <p class="text-body-medium">{{detail.original_language}}</p>
-          <p class="text-label-large">上映日期：</p>
-          <p class="text-body-medium">{{detail.release_date}}</p>
-          <p class="text-label-large">分類標籤：</p>
+          <p class="text-title-large">名稱：{{detail.title}}</p>
+          <p class="text-title-large">概要：</p>
+          <p class="text-body-large">{{detail.overview}}</p>
+          <p class="text-title-large">語系：{{detail.original_language}}</p>
+          <p class="text-title-large">上映日期：{{detail.release_date}}</p>
+          <p class="text-title-large">分類標籤：</p>
           <div>
             <v-chip
               class="mx-1 mb-3"
@@ -140,7 +150,7 @@ onMounted(() => {
           </div>
         </v-col>
         <v-col cols="12" lg="3">
-          <p class="text-label-large">影評得分</p>
+          <p class="text-title-large">影評得分</p>
           <v-progress-circular
             :model-value="progressBarLevel"
             :size="200"
@@ -153,17 +163,30 @@ onMounted(() => {
           >
             <v-avatar color="surface-light" size="150" class="text-display-medium">{{ detail?.vote_average?.toFixed(2) || '0.00' }}</v-avatar>
           </v-progress-circular>
+          <div v-if="videoList[0]?.key">
+            <p class="text-title-large">電影預告片</p>
+            <iframe
+              width="100%"
+              :src="`https://www.youtube.com/embed/${videoList[0].key}`"
+              title="Movie Trailer"
+              frameborder="0"
+              allowfullscreen
+            />
+          </div>
         </v-col>
       </v-row>
       <v-row
         class="mt-10"
         v-if="imageList.length"
       >
+        <v-col cols="12">
+          <p class="text-title-large my-0">電影海報</p>
+        </v-col>
         <v-col
           v-for="(img, idx) in imageList"
           :key="idx"
           cols="12"
-          lg="4"
+          lg="2"
         >
           <img width="100%" :src="`https://image.tmdb.org/t/p/w500${img.file_path}`" alt="">
         </v-col>

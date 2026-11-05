@@ -64,3 +64,9 @@ export const getMovieImgList = (session_id, movie_id) => {
     params: { session_id } 
   })
 }
+
+export const getMovieVideo = (session_id, movie_id) => {
+  return tmdbClient.get(`/movie/${movie_id}/videos`, {
+    params: { session_id } 
+  })
+}
