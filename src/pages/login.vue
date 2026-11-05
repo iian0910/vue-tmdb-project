@@ -48,7 +48,7 @@ const getLongSession = async(token) => {
   try {
     const { data } = await getUserLongSession(token)
     if (data.success) {
-      authStore.setToken(data.session_id)
+      authStore.setSessionID(data.session_id)
       router.push('/')
     } else {
       sessionStorage.removeItem('tempToken')

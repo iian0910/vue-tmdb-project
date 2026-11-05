@@ -8,11 +8,13 @@ const authStore = useAuthStore()
 // methods
 const logout = async() => {
   try {
-    const userID = sessionStorage.getItem('token')
-    const { data } = await userLogout(userID)
+    const session_id = sessionStorage.getItem('session_id')
+    const { data } = await userLogout(session_id)
 
     if (data.success) {
-      authStore.clearToken()
+      authStore.clearSessionID()
+      authStore.clearAccountID()
+
       router.push('/login')
     }
   } catch (error) {

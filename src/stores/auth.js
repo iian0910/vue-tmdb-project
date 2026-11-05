@@ -3,23 +3,37 @@ import { computed, ref } from "vue";
 
 
 export const useAuthStore = defineStore('auth', () => {
-  const token = ref(sessionStorage.getItem('token'))
-  const isLogin = computed(() => token.value !== null)
+  const session_id = ref(sessionStorage.getItem('session_id'))
+  const account_id = ref(sessionStorage.getItem('account_id'))
 
-  const setToken = (newToken) => {
-    token.value = newToken
-    sessionStorage.setItem('token', newToken)
+  const isLogin = computed(() => session_id.value !== null)
+
+  const setSessionID = (newID) => {
+    session_id.value = newID
+    sessionStorage.setItem('session_id', newID)
   }
 
-  const clearToken = () => {
-    token.value = null
-    sessionStorage.removeItem('token')
+  const clearSessionID = () => {
+    session_id.value = null
+    sessionStorage.removeItem('session_id')
+  }
+
+  const setAccountID = (newID) => {
+    account_id.value = newID
+    sessionStorage.setItem('account_id', newID)
+  }
+
+  const clearAccountID = () => {
+    account_id.value = null
+    sessionStorage.removeItem('account_id')
   }
 
   return {
-    token,
+    session_id,
     isLogin,
-    setToken,
-    clearToken
+    setSessionID,
+    clearSessionID,
+    setAccountID,
+    clearAccountID
   }
 })

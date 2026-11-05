@@ -1,11 +1,17 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { getNowPlayingMovies } from '@/api/tmdb'
-import { getPopularMovies } from '@/api/tmdb.js'
+import {
+  getNowPlayingMovies,
+  getPopularMovies,
+  getUserInfo
+} from '@/api/tmdb'
+import { useAuthStore } from '@/stores/auth'
 
 import MovieCarousel from '../components/MovieCarousel.vue'
 import MovieSlide from '@/components/MovieSlide.vue'
 import PageLoading from '@/components/PageLoading.vue'
+
+const authStore = useAuthStore()
 
 // data
 const nowList = ref([])
@@ -13,6 +19,16 @@ const movieList = ref([])
 const isLoading = ref(false)
 
 // methods
+const getInfo = async() => {
+  const sessionID = sessionStorage.getItem('session_id')
+  try {
+    const { data } = await getUserInfo(sessionID)
+    authStore.setAccountID(data.id)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 const fetchPageData = async() => {
   isLoading.value = true
   try {
@@ -32,6 +48,7 @@ const fetchPageData = async() => {
 
 // mounted
 onMounted(() => {
+  getInfo()
   fetchPageData()
 })
 </script>

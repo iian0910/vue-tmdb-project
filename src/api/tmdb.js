@@ -33,14 +33,32 @@ export const userLogin = (userInfo) => {
   })
 }
 
-export const userLogout = (id) => {
+export const userLogout = (session_id) => {
   return tmdbClient.delete('/authentication/session', {
-    params: {session_id: id} 
+    params: { session_id } 
   })
 }
 
-export const getUserLongSession = (token) => {
+export const getUserLongSession = (request_token) => {
   return tmdbClient.get('/authentication/session/new', {
-    params: {request_token: token} 
+    params: { request_token } 
+  })
+}
+
+export const getUserInfo = (session_id) => {
+  return tmdbClient.get('/account', {
+    params: { session_id } 
+  })
+}
+
+export const changeFavoriteStatus = (session_id, account_id, item) => {
+  return tmdbClient.post(`/account/${account_id}/favorite`, item, {
+    params: { session_id } 
+  })
+}
+
+export const getMovieStates = (session_id, movie_id) => {
+  return tmdbClient.get(`/movie/${movie_id}/account_states`, {
+    params: { session_id } 
   })
 }

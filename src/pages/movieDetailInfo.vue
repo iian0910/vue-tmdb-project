@@ -1,5 +1,9 @@
 <script setup>
-import { getMovieDetail } from '@/api/tmdb'
+import {
+  getMovieDetail,
+  changeFavoriteStatus,
+  getMovieStates
+} from '@/api/tmdb'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -11,6 +15,7 @@ const route = useRoute()
 // data
 const detail = ref({})
 const isLoading = ref(false)
+const isFavoriteMovie = ref(false)
 
 // computed
 const progressBarLevel = computed(() => (detail.value?.vote_average || 0) * 10)
@@ -21,12 +26,39 @@ const getDetail = async(id) => {
   try {
     const { data } = await getMovieDetail(id)
     detail.value = data
+    
+    updateMovieDetail(detail.value.id)
   } catch (error) {
     console.log(error)
   } finally {
     isLoading.value = false
   }
-  
+}
+
+const favoriteStatus = async(id) => {
+  const accountID = sessionStorage.getItem('account_id')
+  const sessionID = sessionStorage.getItem('session_id')
+  const obj = {
+    media_type: 'movie',
+    media_id: id,
+    favorite: !isFavoriteMovie.value
+  }
+  try {
+    await changeFavoriteStatus(sessionID, accountID, obj)
+    updateMovieDetail(id)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const updateMovieDetail = async(id) => {
+  const sessionID = sessionStorage.getItem('session_id')
+  try {
+    const { data } = await getMovieStates(sessionID, id)
+    isFavoriteMovie.value = data.favorite
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 // mounted
@@ -62,6 +94,15 @@ onMounted(() => {
       <v-row>
         <v-col cols="12" lg="4">
           <img width="100%" :src="`https://image.tmdb.org/t/p/w500${detail.poster_path}`" :alt="detail.title">
+          <v-btn
+            :variant="isFavoriteMovie ? 'elevated' : 'outlined'"
+            :prepend-icon="isFavoriteMovie ? 'mdi mdi-heart' : 'mdi mdi-heart-outline'"
+            color="pink-lighten-3"
+            class="rounded mt-5"
+            @click="favoriteStatus(detail.id)"
+          >
+            {{isFavoriteMovie ? '已' : ''}}加入我的最愛
+          </v-btn>
         </v-col>
         <v-col cols="12" lg="5">
           <p class="text-label-large">名稱：</p>
