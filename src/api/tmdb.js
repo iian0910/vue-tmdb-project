@@ -28,9 +28,7 @@ export const getTempToken = () => {
 }
 
 export const userLogin = (userInfo) => {
-  return tmdbClient.get('/authentication/token/validate_with_login', {
-    params: userInfo 
-  })
+  return tmdbClient.post('/authentication/token/validate_with_login', userInfo)
 }
 
 export const userLogout = (session_id) => {
