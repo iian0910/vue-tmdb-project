@@ -48,8 +48,9 @@ export const getUserInfo = (session_id) => {
 }
 
 export const changeFavoriteStatus = (session_id, account_id, item) => {
-  return tmdbClient.post(`/account/${account_id}/favorite`, item, {
-    params: { session_id } 
+  return tmdbClient.post(`/account/${account_id}/favorite`, {
+    ...item,
+    session_id
   })
 }
 
