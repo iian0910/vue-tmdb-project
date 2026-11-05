@@ -92,7 +92,8 @@ onMounted(() => {
       rounded="xl"
       width="500"
     >
-      <div class="d-flex justify-center" v-if="!canSingIn">
+      <div class="d-flex justify-center flex-column" v-if="!canSingIn">
+        <h3 class="text-center">需先取得臨時 Token 才可登入</h3>
         <v-btn
           variant="outlined"
           color="error"
@@ -101,10 +102,11 @@ onMounted(() => {
           @click="getToken"
           :loading="isBtnLoading"
         >
-          需先取得臨時 Token
+          取得 Token
         </v-btn>
       </div>
       <div v-else>
+        <h1 class="text-center">登入</h1>
         <v-text-field
           class="my-3"
           hide-details="auto"
