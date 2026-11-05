@@ -2,11 +2,16 @@
 import router from '@/router/index'
 import { userLogout } from '@/api/tmdb'
 import { useAuthStore } from '@/stores/auth'
+import { ref } from 'vue'
 
 const authStore = useAuthStore()
 
+// data
+const isBtnLoading = ref(false)
+
 // methods
 const logout = async() => {
+  isBtnLoading.value = true
   try {
     const session_id = sessionStorage.getItem('session_id')
     const { data } = await userLogout(session_id)
@@ -19,6 +24,8 @@ const logout = async() => {
     }
   } catch (error) {
     console.log(error)
+  } finally {
+    isBtnLoading.value = false
   }
 }
 </script>
@@ -39,6 +46,7 @@ const logout = async() => {
       color="error"
       class="mx-3 rounded"
       @click="logout"
+      :loading="isBtnLoading"
     >
       登出
     </v-btn>

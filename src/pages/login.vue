@@ -11,9 +11,11 @@ const authStore = useAuthStore()
 const canSingIn = ref(false)
 const account = ref('')
 const passWord = ref('')
+const isBtnLoading = ref(false)
 
 // methods
 const getToken = async() => {
+  isBtnLoading.value = true
   try {
     const { data } = await getTempToken()
     if (data.success) {
@@ -22,10 +24,13 @@ const getToken = async() => {
     }
   } catch (error) {
     console.log(error)
+  } finally {
+    isBtnLoading.value = false
   }
 }
 
 const login = async() => {
+  isBtnLoading.value = true
   const userInfo = {
     username: account.value,
     password: passWord.value,
@@ -37,9 +42,11 @@ const login = async() => {
       getLongSession(data.request_token)
     } else {
       sessionStorage.removeItem('tempToken')
+      isBtnLoading.value = false
     }
   } catch (error) {
     console.log(error)
+    isBtnLoading.value = false
   }
   
 }
@@ -56,8 +63,8 @@ const getLongSession = async(token) => {
   } catch (error) {
     console.log(error)
   } finally {
-    console.log('我有進來!!!')
     sessionStorage.removeItem('tempToken')
+    isBtnLoading.value = false
   }
 }
 
@@ -92,6 +99,7 @@ onMounted(() => {
           size="x-large"
           class="mx-3 rounded"
           @click="getToken"
+          :loading="isBtnLoading"
         >
           需先取得臨時 Token
         </v-btn>
@@ -118,6 +126,7 @@ onMounted(() => {
             size="x-large"
             class="mx-3 rounded"
             @click="login"
+            :loading="isBtnLoading"
           >
             登入
           </v-btn>

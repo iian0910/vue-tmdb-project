@@ -20,6 +20,7 @@ const isLoading = ref(false)
 const isFavoriteMovie = ref(false)
 const imageList = ref([])
 const videoList = ref([])
+const isBtnLoading = ref(false)
 
 // computed
 const progressBarLevel = computed(() => (detail.value?.vote_average || 0) * 10)
@@ -42,6 +43,7 @@ const getDetail = async(id) => {
 }
 
 const favoriteStatus = async(id) => {
+  isBtnLoading.value = true
   const accountID = sessionStorage.getItem('account_id')
   const sessionID = sessionStorage.getItem('session_id')
   const obj = {
@@ -49,6 +51,7 @@ const favoriteStatus = async(id) => {
     media_id: id,
     favorite: !isFavoriteMovie.value
   }
+
   try {
     await changeFavoriteStatus(sessionID, accountID, obj)
     updateMovieDetail(id)
@@ -64,6 +67,8 @@ const updateMovieDetail = async(id) => {
     isFavoriteMovie.value = data.favorite
   } catch (error) {
     console.log(error)
+  } finally {
+    isBtnLoading.value = false
   }
 }
 
@@ -126,6 +131,7 @@ onMounted(() => {
             color="pink-lighten-3"
             class="rounded mt-5"
             @click="favoriteStatus(detail.id)"
+            :loading="isBtnLoading"
           >
             {{isFavoriteMovie ? '已' : ''}}加入我的最愛
           </v-btn>
