@@ -60,7 +60,7 @@ const goToDetail = (id) => {
           />
         </v-card>
       </v-slide-group-item>
-      <v-slide-group-item>
+      <v-slide-group-item v-if="movieList.length">
         <v-card
           class="poster-container more ma-3"
           color="grey-lighten-4"
