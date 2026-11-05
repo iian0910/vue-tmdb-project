@@ -2,7 +2,8 @@
 import {
   getMovieDetail,
   changeFavoriteStatus,
-  getMovieStates
+  getMovieStates,
+  getMovieImgList
 } from '@/api/tmdb'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -16,6 +17,7 @@ const route = useRoute()
 const detail = ref({})
 const isLoading = ref(false)
 const isFavoriteMovie = ref(false)
+const imageList = ref([])
 
 // computed
 const progressBarLevel = computed(() => (detail.value?.vote_average || 0) * 10)
@@ -28,6 +30,7 @@ const getDetail = async(id) => {
     detail.value = data
     
     updateMovieDetail(detail.value.id)
+    await getMovieImage(detail.value.id)
   } catch (error) {
     console.log(error)
   } finally {
@@ -56,6 +59,16 @@ const updateMovieDetail = async(id) => {
   try {
     const { data } = await getMovieStates(sessionID, id)
     isFavoriteMovie.value = data.favorite
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const getMovieImage = async(id) => {
+  const sessionID = sessionStorage.getItem('session_id')
+  try {
+    const { data } = await getMovieImgList(sessionID, id)
+    imageList.value = data.posters
   } catch (error) {
     console.log(error)
   }
@@ -140,6 +153,19 @@ onMounted(() => {
           >
             <v-avatar color="surface-light" size="150" class="text-display-medium">{{ detail?.vote_average?.toFixed(2) || '0.00' }}</v-avatar>
           </v-progress-circular>
+        </v-col>
+      </v-row>
+      <v-row
+        class="mt-10"
+        v-if="imageList.length"
+      >
+        <v-col
+          v-for="(img, idx) in imageList"
+          :key="idx"
+          cols="12"
+          lg="4"
+        >
+          <img width="100%" :src="`https://image.tmdb.org/t/p/w500${img.file_path}`" alt="">
         </v-col>
       </v-row>
     </v-container>
