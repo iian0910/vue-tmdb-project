@@ -38,9 +38,7 @@ export const userLogout = (session_id) => {
 }
 
 export const getUserLongSession = (request_token) => {
-  return tmdbClient.get('/authentication/session/new', {
-    params: { request_token } 
-  })
+  return tmdbClient.post('/authentication/session/new', { request_token })
 }
 
 export const getUserInfo = (session_id) => {
