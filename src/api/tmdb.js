@@ -1,5 +1,8 @@
 import axios from "axios"
 import { TMDB_ERROR_MESSAGES, HTTP_STATUS_MESSAGES } from "@/util/tmdbStatus"
+import { useAlert } from '@/composables/useAlert'
+
+const { showAlert } = useAlert()
 
 const tmdbClient = axios.create({
   baseURL: '/api/tmdb',
@@ -13,7 +16,6 @@ tmdbClient.interceptors.response.use(
     return response
   },
   (error) => {
-    console.dir(error)
     if (error.response) {
       const httpStatus = error.response.status
       const responseData = error.response.data || {}
@@ -26,7 +28,7 @@ tmdbClient.interceptors.response.use(
       error.friendlyMessage = friendlyMessage
       error.tmdbCode = tmdbCode
 
-      console.error(`[TMDB API Error] HTTP ${httpStatus} | 代碼 ${tmdbCode}: ${friendlyMessage}`)
+      console.error(`[TMDB API Error] HTTP ${httpStatus} | 代碼 ${tmdbCode}: ${friendlyMessage}`, 'error')
 
       // 登入失敗或Token過期
       const authExpiredCodes = [3, 14, 17, 33]
@@ -40,7 +42,8 @@ tmdbClient.interceptors.response.use(
       error.friendlyMessage = error.message || '發送請求時發生錯誤'
     }
 
-    return Promise.request(error)
+    showAlert(error.friendlyMessage, 'error')
+    return Promise.reject(error)
   }
 )
 
