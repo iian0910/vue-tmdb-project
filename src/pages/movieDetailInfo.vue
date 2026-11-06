@@ -21,6 +21,7 @@ const isFavoriteMovie = ref(false)
 const imageList = ref([])
 const videoList = ref([])
 const isBtnLoading = ref(false)
+const isShowMovie = ref(false)
 
 // computed
 const progressBarLevel = computed(() => (detail.value?.vote_average || 0) * 10)
@@ -125,16 +126,28 @@ onMounted(() => {
       <v-row>
         <v-col cols="12" lg="4">
           <img width="100%" :src="`https://image.tmdb.org/t/p/w500${detail.poster_path}`" :alt="detail.title">
-          <v-btn
-            :variant="isFavoriteMovie ? 'elevated' : 'outlined'"
-            :prepend-icon="isFavoriteMovie ? 'mdi mdi-heart' : 'mdi mdi-heart-outline'"
-            color="pink-lighten-3"
-            class="rounded mt-5"
-            @click="favoriteStatus(detail.id)"
-            :loading="isBtnLoading"
-          >
-            {{isFavoriteMovie ? '已' : ''}}加入我的最愛
-          </v-btn>
+          <div class="d-flex">
+            <v-btn
+              :variant="isFavoriteMovie ? 'elevated' : 'outlined'"
+              :prepend-icon="isFavoriteMovie ? 'mdi mdi-heart' : 'mdi mdi-heart-outline'"
+              color="pink-lighten-3"
+              class="rounded mt-5"
+              @click="favoriteStatus(detail.id)"
+              :loading="isBtnLoading"
+            >
+              {{isFavoriteMovie ? '已' : ''}}加入我的最愛
+            </v-btn>
+            <v-btn
+              v-if="videoList[0]?.key"
+              variant="outlined"
+              prepend-icon="mdi mdi-movie-open-play"
+              color="secondary"
+              class="rounded mt-5 ml-5"
+              @click="isShowMovie = true"
+            >
+              電影預告片
+            </v-btn>
+          </div>
         </v-col>
         <v-col cols="12" lg="5">
           <p class="text-title-large">名稱：{{detail.title}}</p>
@@ -169,16 +182,6 @@ onMounted(() => {
           >
             <v-avatar color="surface-light" size="150" class="text-display-medium">{{ detail?.vote_average?.toFixed(2) || '0.00' }}</v-avatar>
           </v-progress-circular>
-          <div v-if="videoList[0]?.key">
-            <p class="text-title-large">電影預告片</p>
-            <iframe
-              width="100%"
-              :src="`https://www.youtube.com/embed/${videoList[0].key}`"
-              title="Movie Trailer"
-              frameborder="0"
-              allowfullscreen
-            />
-          </div>
         </v-col>
       </v-row>
       <v-row
@@ -198,6 +201,36 @@ onMounted(() => {
         </v-col>
       </v-row>
     </v-container>
+    <v-dialog
+      v-model="isShowMovie"
+      width="600"
+    >
+      <v-card
+        prepend-icon="mdi mdi-movie-open-play"
+        title="電影預告片"
+        color="background"
+      >
+        <v-card-body>
+          <iframe
+            class="play_movie"
+            width="600"
+            height="400"
+            :src="`https://www.youtube.com/embed/${videoList[0].key}`"
+            title="Movie Trailer"
+            frameborder="0"
+            allowfullscreen
+          />
+        </v-card-body>
+
+        <v-card-actions>
+          <v-btn
+            class="ms-auto"
+            text="關閉"
+            @click="isShowMovie = false"
+          ></v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
