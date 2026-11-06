@@ -3,7 +3,8 @@ import { onMounted, ref } from 'vue'
 import {
   getNowPlayingMovies,
   getPopularMovies,
-  getUserInfo
+  getUserInfo,
+  getFavoriteMovieList
 } from '@/api/tmdb'
 import { useAuthStore } from '@/stores/auth'
 
@@ -16,6 +17,7 @@ const authStore = useAuthStore()
 // data
 const nowList = ref([])
 const movieList = ref([])
+const favoriteList = ref([])
 const isLoading = ref(false)
 
 // methods
@@ -31,14 +33,18 @@ const getInfo = async() => {
 
 const fetchPageData = async() => {
   isLoading.value = true
+  const sessionID = sessionStorage.getItem('session_id')
+  const accountID = sessionStorage.getItem('account_id')
   try {
-    const [nowMovieList, popularMovieList] = await Promise.all([
+    const [nowMovieList, popularMovieList, favoriteMovieList] = await Promise.all([
       getNowPlayingMovies(),
-      getPopularMovies()
+      getPopularMovies(),
+      getFavoriteMovieList(sessionID, accountID)
     ])
 
-    nowList.value = nowMovieList.data.results.slice(0, 10)
-    movieList.value = popularMovieList.data.results.slice(0, 10)
+    nowList.value = nowMovieList.data.results
+    movieList.value = popularMovieList.data.results
+    favoriteList.value = favoriteMovieList.data.results
   } catch (error) {
     console.log(error)
   } finally {
@@ -60,12 +66,20 @@ onMounted(() => {
   />
   <div v-else>
     <MovieCarousel
-      :move-list="nowList"
+      :move-list="nowList.slice(0, 10)"
     />
     <v-container>
       <MovieSlide
+        v-if="movieList.length"
         title="熱門電影"
-        :movie-list="movieList"
+        :movie-list="movieList.slice(0, 10)"
+        :show-more="movieList.length >= 10"
+      />
+      <MovieSlide
+        v-if="favoriteList.length"
+        title="我的最愛"
+        :movie-list="favoriteList.slice(0, 10)"
+        :show-more="favoriteList.length >= 10"
       />
     </v-container>
   </div>

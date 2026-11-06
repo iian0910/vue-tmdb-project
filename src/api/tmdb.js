@@ -11,6 +11,7 @@ const tmdbClient = axios.create({
   }
 })
 
+// GET
 export const getPopularMovies = (page = 1) => {
   return tmdbClient.get('/movie/popular', {
     params: { page }
@@ -31,28 +32,8 @@ export const getTempToken = () => {
   return tmdbClient.get(`/authentication/token/new`)
 }
 
-export const userLogin = (userInfo) => {
-  return tmdbClient.post('/authentication/token/validate_with_login', userInfo)
-}
-
-export const userLogout = (session_id) => {
-  return tmdbClient.delete('/authentication/session', {
-    params: { session_id } 
-  })
-}
-
-export const getUserLongSession = (request_token) => {
-  return tmdbClient.post('/authentication/session/new', { request_token })
-}
-
 export const getUserInfo = (session_id) => {
   return tmdbClient.get('/account', {
-    params: { session_id } 
-  })
-}
-
-export const changeFavoriteStatus = (session_id, account_id, item) => {
-  return tmdbClient.post(`/account/${account_id}/favorite`, item, {
     params: { session_id } 
   })
 }
@@ -71,6 +52,34 @@ export const getMovieImgList = (session_id, movie_id) => {
 
 export const getMovieVideo = (session_id, movie_id) => {
   return tmdbClient.get(`/movie/${movie_id}/videos`, {
+    params: { session_id } 
+  })
+}
+
+export const getFavoriteMovieList = (session_id, account_id) => {
+  return tmdbClient.get(`/account/${account_id}/favorite/movies`, {
+    params: { session_id } 
+  })
+}
+
+// POST
+export const userLogin = (userInfo) => {
+  return tmdbClient.post('/authentication/token/validate_with_login', userInfo)
+}
+
+export const getUserLongSession = (request_token) => {
+  return tmdbClient.post('/authentication/session/new', { request_token })
+}
+
+export const changeFavoriteStatus = (session_id, account_id, item) => {
+  return tmdbClient.post(`/account/${account_id}/favorite`, item, {
+    params: { session_id } 
+  })
+}
+
+// DELETE
+export const userLogout = (session_id) => {
+  return tmdbClient.delete('/authentication/session', {
     params: { session_id } 
   })
 }

@@ -15,6 +15,10 @@ const props = defineProps({
   movieList: {
     type: Array,
     default: () => ([])
+  },
+  showMore: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -60,7 +64,7 @@ const goToDetail = (id) => {
           />
         </v-card>
       </v-slide-group-item>
-      <v-slide-group-item v-if="movieList.length">
+      <v-slide-group-item v-if="showMore">
         <v-card
           class="poster-container more ma-3"
           color="grey-lighten-4"
