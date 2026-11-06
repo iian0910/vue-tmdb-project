@@ -31,14 +31,22 @@ const progressBarLevel = computed(() => (detail.value?.vote_average || 0) * 10)
 // methods
 const getDetail = async(id) => {
   isLoading.value = true
+  const sessionID = sessionStorage.getItem('session_id')
   try {
     const { data } = await getMovieDetail(id)
     detail.value = data
     
     updateMovieDetail(detail.value.id)
-    await getMovieImage(detail.value.id)
-    await getVideo(detail.value.id)
-    await getMovieReview(detail.value.id)
+
+    const [imgRes, videoRes, reviewsRes] = await Promise.all([
+      getMovieImgList(sessionID, detail.value.id),
+      getMovieVideo(sessionID, detail.value.id),
+      getMovieReviewsList(sessionID, detail.value.id)
+    ])
+
+    imageList.value = imgRes.data.posters
+    videoList.value = videoRes.data.results
+    movieReviewList.value = reviewsRes.data.results.slice(0, 6)
   } catch (error) {
     console.log(error)
   } finally {
@@ -73,36 +81,6 @@ const updateMovieDetail = async(id) => {
     console.log(error)
   } finally {
     isBtnLoading.value = false
-  }
-}
-
-const getMovieImage = async(id) => {
-  const sessionID = sessionStorage.getItem('session_id')
-  try {
-    const { data } = await getMovieImgList(sessionID, id)
-    imageList.value = data.posters
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-const getVideo = async(id) => {
-  const sessionID = sessionStorage.getItem('session_id')
-  try {
-    const { data } = await getMovieVideo(sessionID, id)
-    videoList.value = data.results
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-const getMovieReview = async(id) => {
-  const sessionID = sessionStorage.getItem('session_id')
-  try {
-    const { data } = await getMovieReviewsList(sessionID, id)
-    movieReviewList.value = data.results.slice(0, 6)
-  } catch (error) {
-    console.log(error)
   }
 }
 
