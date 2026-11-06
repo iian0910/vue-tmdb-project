@@ -62,6 +62,12 @@ export const getFavoriteMovieList = (session_id, account_id) => {
   })
 }
 
+export const getMovieReviewsList = (session_id, movie_id) => {
+  return tmdbClient.get(`/movie/${movie_id}/reviews`, {
+    params: { session_id, language: 'en-US' } 
+  })
+}
+
 // POST
 export const userLogin = (userInfo) => {
   return tmdbClient.post('/authentication/token/validate_with_login', userInfo)
