@@ -202,35 +202,35 @@ onMounted(() => {
       </v-row>
     </v-container>
     <v-dialog
-      v-model="isShowMovie"
-      width="600"
-    >
-      <v-card
-        prepend-icon="mdi mdi-movie-open-play"
-        title="電影預告片"
-        color="background"
-      >
-        <v-card-body>
-          <iframe
-            class="play_movie"
-            width="600"
-            height="400"
-            :src="`https://www.youtube.com/embed/${videoList[0].key}`"
-            title="Movie Trailer"
-            frameborder="0"
-            allowfullscreen
-          />
-        </v-card-body>
+    v-model="isShowMovie"
+    width="90%"
+    max-width="800px"
+  >
+    <v-card color="black" rounded="lg" class="position-relative overflow-hidden">
+      <!-- 右上角懸浮關閉按鈕，避免額外的標題列/按鈕列破壞 16:9 比例 -->
+      <v-btn
+        icon="mdi-close"
+        variant="text"
+        color="white"
+        size="small"
+        class="position-absolute"
+        style="top: 8px; right: 8px; z-index: 10;"
+        @click="isShowMovie = false"
+      />
 
-        <v-card-actions>
-          <v-btn
-            class="ms-auto"
-            text="關閉"
-            @click="isShowMovie = false"
-          ></v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      <!-- Vuetify 原生等比容器 -->
+      <v-responsive :aspect-ratio="16 / 9">
+        <iframe
+          class="w-100 h-100"
+          :src="`https://www.youtube.com/embed/${videoList[0]?.key}`"
+          title="Movie Trailer"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        />
+      </v-responsive>
+    </v-card>
+  </v-dialog>
   </div>
 </template>
 
