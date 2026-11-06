@@ -3,29 +3,30 @@ import { onMounted, ref } from 'vue'
 import { getTempToken, userLogin, getUserLongSession } from '@/api/tmdb'
 import { sessionWithExpiry } from '@/util/sessionWithExpiry'
 import { useAuthStore } from '@/stores/auth'
+
 import router from '@/router'
+import PageLoading from '@/components/PageLoading.vue'
 
 const authStore = useAuthStore()
 
 // data
-const canSingIn = ref(false)
 const account = ref('')
 const passWord = ref('')
 const isBtnLoading = ref(false)
+const isLoading = ref(false)
 
 // methods
 const getToken = async() => {
-  isBtnLoading.value = true
+  isLoading.value = true
   try {
     const { data } = await getTempToken()
     if (data.success) {
       sessionWithExpiry.setItem('tempToken', data.request_token)
-      canSingIn.value = true
     }
   } catch (error) {
     console.log(error)
   } finally {
-    isBtnLoading.value = false
+    isLoading.value = false
   }
 }
 
@@ -73,16 +74,18 @@ const signIn = () => {
 }
 
 onMounted(() => {
-  if(sessionStorage.getItem('tempToken') !== null) {
-    canSingIn.value = true
-  } else {
-    canSingIn.value = false
+  if(sessionStorage.getItem('tempToken') === null) {
+    getToken()
   }
 })
 
 </script>
 
 <template>
+  <PageLoading
+    v-if="isLoading"
+    :is-loading="isLoading"
+  />
   <v-container
     class="h-100 d-flex justify-center align-center"
   >
@@ -92,20 +95,7 @@ onMounted(() => {
       rounded="xl"
       width="500"
     >
-      <div class="d-flex justify-center flex-column" v-if="!canSingIn">
-        <h3 class="text-center">需先取得臨時 Token 才可登入</h3>
-        <v-btn
-          variant="outlined"
-          color="error"
-          size="x-large"
-          class="mx-3 rounded"
-          @click="getToken"
-          :loading="isBtnLoading"
-        >
-          取得 Token
-        </v-btn>
-      </div>
-      <div v-else>
+      <div>
         <h1 class="text-center">登入</h1>
         <v-text-field
           class="my-3"
