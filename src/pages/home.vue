@@ -5,7 +5,8 @@ import {
   getPopularMovies,
   getUserInfo,
   getFavoriteMovieList,
-  getTrendingMovie
+  getTrendingMovie,
+  getTopRateMovie
 } from '@/api/tmdb'
 import { useAuthStore } from '@/stores/auth'
 
@@ -20,6 +21,7 @@ const nowList = ref([])
 const movieList = ref([])
 const favoriteList = ref([])
 const trendingMovieList = ref([])
+const topRateList = ref([])
 const isLoading = ref(false)
 
 // methods
@@ -38,17 +40,19 @@ const fetchPageData = async() => {
   const sessionID = sessionStorage.getItem('session_id')
   const accountID = sessionStorage.getItem('account_id')
   try {
-    const [now, popular, favorite, trending] = await Promise.all([
+    const [now, popular, favorite, trending, topRate] = await Promise.all([
       getNowPlayingMovies(),
       getPopularMovies(),
       getFavoriteMovieList(sessionID, accountID),
-      getTrendingMovie(sessionID, 'week')
+      getTrendingMovie(sessionID, 'week'),
+      getTopRateMovie(sessionID)
     ])
 
     nowList.value = now.data.results
     movieList.value = popular.data.results
     favoriteList.value = favorite.data.results
     trendingMovieList.value = trending.data.results
+    topRateList.value = topRate.data.results
   } catch (error) {
     console.log(error)
   } finally {
@@ -82,6 +86,12 @@ onMounted(() => {
         v-if="movieList.length"
         title="熱門電影"
         :movie-list="movieList.slice(0, 10)"
+      />
+      <MovieSlide
+        v-if="topRateList.length"
+        title="經典神作推薦"
+        :movie-list="topRateList.slice(0, 10)"
+        showMore
       />
       <MovieSlide
         v-if="favoriteList.length"

@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-import { getPopularMovies } from '@/api/tmdb.js'
+import { getTopRateMovie } from '@/api/tmdb.js'
 import { useRouter } from 'vue-router'
 
 import BackPage from '../components/BackPage.vue'
@@ -23,7 +23,7 @@ watch(currentPage, (newPage) => {
 const getMovieList = async(page = 1) => {
   isLoading.value = true
   try {
-    const { data } = await getPopularMovies(page)
+    const { data } = await getTopRateMovie(page)
     movieList.value = data.results
     listTotalPage.value = data.total_pages
     currentPage.value = data.page
@@ -57,8 +57,8 @@ onMounted(() => {
     <v-row>
       <v-col
         cols="12"
-        md="4"
-        lg="2"
+        sm="4"
+        lg="3"
         v-for="movie in movieList"
         :key="movie.id"
       >

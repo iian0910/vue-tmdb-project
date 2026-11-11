@@ -21,9 +21,9 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
-      path: '/popularMovieList',
-      name: 'PopularMovie',
-      component: () => import('@/pages/popularMovie.vue'),
+      path: '/topRateMovieList',
+      name: 'TopRateMovie',
+      component: () => import('@/pages/topRateMovie.vue'),
       meta: { requiresAuth: true }
     },
     {
