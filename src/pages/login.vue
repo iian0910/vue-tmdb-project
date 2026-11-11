@@ -14,7 +14,7 @@ const account = ref('ian0910')
 const passWord = ref('@@##QWEasd0910')
 const isBtnLoading = ref(false)
 const isLoading = ref(false)
-const hiddenPassWord = ref(false)
+const hiddenPassWord = ref(true)
 
 // methods
 const getToken = async() => {
