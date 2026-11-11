@@ -4,7 +4,8 @@ import {
   getNowPlayingMovies,
   getPopularMovies,
   getUserInfo,
-  getFavoriteMovieList
+  getFavoriteMovieList,
+  getTrendingMovie
 } from '@/api/tmdb'
 import { useAuthStore } from '@/stores/auth'
 
@@ -18,6 +19,7 @@ const authStore = useAuthStore()
 const nowList = ref([])
 const movieList = ref([])
 const favoriteList = ref([])
+const trendingMovieList = ref([])
 const isLoading = ref(false)
 
 // methods
@@ -36,15 +38,17 @@ const fetchPageData = async() => {
   const sessionID = sessionStorage.getItem('session_id')
   const accountID = sessionStorage.getItem('account_id')
   try {
-    const [nowMovieList, popularMovieList, favoriteMovieList] = await Promise.all([
+    const [now, popular, favorite, trending] = await Promise.all([
       getNowPlayingMovies(),
       getPopularMovies(),
-      getFavoriteMovieList(sessionID, accountID)
+      getFavoriteMovieList(sessionID, accountID),
+      getTrendingMovie(sessionID, 'week')
     ])
 
-    nowList.value = nowMovieList.data.results
-    movieList.value = popularMovieList.data.results
-    favoriteList.value = favoriteMovieList.data.results
+    nowList.value = now.data.results
+    movieList.value = popular.data.results
+    favoriteList.value = favorite.data.results
+    trendingMovieList.value = trending.data.results
   } catch (error) {
     console.log(error)
   } finally {
@@ -70,16 +74,19 @@ onMounted(() => {
     />
     <v-container>
       <MovieSlide
+        v-if="trendingMovieList.length"
+        title="本周發燒"
+        :movie-list="trendingMovieList.slice(0, 10)"
+      />
+      <MovieSlide
         v-if="movieList.length"
         title="熱門電影"
         :movie-list="movieList.slice(0, 10)"
-        :show-more="movieList.length >= 10"
       />
       <MovieSlide
         v-if="favoriteList.length"
         title="我的最愛"
         :movie-list="favoriteList.slice(0, 10)"
-        :show-more="favoriteList.length >= 10"
       />
     </v-container>
   </div>

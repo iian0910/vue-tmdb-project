@@ -44,7 +44,7 @@ const goToDetail = (id) => {
       v-model="selectedCard"
       class="pa-4"
       selected-class="bg-primary"
-      :show-arrows="!isMobile"
+      :show-arrows="isMobile ? false : 'always'"
     >
       <v-slide-group-item
         v-for="movie in movieList"

@@ -68,6 +68,12 @@ export const getMovieReviewsList = (session_id, movie_id) => {
   })
 }
 
+export const getTrendingMovie = (session_id, time) => {
+  return tmdbClient.get(`/trending/movie/${time}`, {
+    params: { session_id } 
+  })
+}
+
 // POST
 export const userLogin = (userInfo) => {
   return tmdbClient.post('/authentication/token/validate_with_login', userInfo)
