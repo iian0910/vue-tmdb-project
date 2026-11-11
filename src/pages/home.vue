@@ -91,6 +91,7 @@ onMounted(() => {
         v-if="topRateList.length"
         title="經典神作推薦"
         :movie-list="topRateList.slice(0, 10)"
+        :page-name="'/topRateMovieList'"
         showMore
       />
       <MovieSlide

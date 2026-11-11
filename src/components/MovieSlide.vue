@@ -19,6 +19,10 @@ const props = defineProps({
   showMore: {
     type: Boolean,
     default: false
+  },
+  pageName: {
+    type: String,
+    default: ''
   }
 })
 
@@ -26,8 +30,8 @@ const props = defineProps({
 const selectedCard = ref(null)
 
 // methods
-const goToTopRateList = () => {
-  router.push('/topRateMovieList')
+const goToPage = (pageName) => {
+  router.push(pageName)
 }
 const goToDetail = (id) => {
   router.push({
@@ -71,7 +75,7 @@ const goToDetail = (id) => {
           width="260"
           elevation="2"
           rounded="xl"
-          @click="goToTopRateList"
+          @click="goToPage(pageName)"
         >
           <div class="d-flex justify-center h-100">
             <p class="text-body-large align-self-center text-white">看更多...</p>
