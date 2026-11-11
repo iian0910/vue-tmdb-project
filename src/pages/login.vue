@@ -10,10 +10,11 @@ import PageLoading from '@/components/PageLoading.vue'
 const authStore = useAuthStore()
 
 // data
-const account = ref('')
-const passWord = ref('')
+const account = ref('ian0910')
+const passWord = ref('@@##QWEasd0910')
 const isBtnLoading = ref(false)
 const isLoading = ref(false)
+const hiddenPassWord = ref(false)
 
 // methods
 const getToken = async() => {
@@ -110,7 +111,12 @@ onMounted(() => {
           label="密碼"
           variant="outlined"
           v-model="passWord"
-        />
+          :type="hiddenPassWord ? 'password' : ''"
+        >
+          <template v-slot:append-inner>
+            <v-icon :icon="hiddenPassWord ? 'mdi mdi-eye-off' : 'mdi mdi-eye'" start @click="hiddenPassWord = !hiddenPassWord"></v-icon>
+          </template>
+        </v-text-field>
         <div class="d-flex justify-center mt-8">
           <v-btn
             variant="outlined"
