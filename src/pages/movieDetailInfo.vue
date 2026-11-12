@@ -99,141 +99,133 @@ onMounted(() => {
   <div v-else>
     <v-card
       :image="`https://image.tmdb.org/t/p/original${detail.backdrop_path}`"
-      height="450"
+      height="600"
       theme="dark"
-      class="d-flex align-end"
     >
-      <v-container>
-        <v-card-text class="pa-0">
-          <div class="movie-info text-white mb-5">
-            <h3 class="text-headline-small text-md-headline-large font-weight-bold mb-3">{{detail.title}}</h3>
-            <p class="text-body-medium text-md-body-large overview-text">{{detail.overview || '目前無電影描述'}}</p>
-          </div>
-        </v-card-text>
-      </v-container>
+      <div class="bg-mask"></div>
     </v-card>
-    <v-container>
-      <BackPage v-if="!isLoading"/>
-      <v-row>
-        <v-col cols="12" lg="4">
-          <img width="100%" :src="`https://image.tmdb.org/t/p/w500${detail.poster_path}`" :alt="detail.title">
-          <div class="d-flex">
-            <v-btn
-              :variant="isFavoriteMovie ? 'elevated' : 'outlined'"
-              :prepend-icon="isFavoriteMovie ? 'mdi mdi-heart' : 'mdi mdi-heart-outline'"
-              color="pink-lighten-3"
-              class="rounded mt-5"
-              @click="favoriteStatus(detail.id)"
-              :loading="isBtnLoading"
+    <v-container class="detail-info">
+        <BackPage v-if="!isLoading"/>
+        <v-row>
+          <v-col cols="12" lg="4">
+            <img width="100%" :src="`https://image.tmdb.org/t/p/w500${detail.poster_path}`" :alt="detail.title">
+            <div class="d-flex">
+              <v-btn
+                :variant="isFavoriteMovie ? 'elevated' : 'outlined'"
+                :prepend-icon="isFavoriteMovie ? 'mdi mdi-heart' : 'mdi mdi-heart-outline'"
+                color="pink-lighten-3"
+                class="rounded mt-5"
+                @click="favoriteStatus(detail.id)"
+                :loading="isBtnLoading"
+              >
+                {{isFavoriteMovie ? '已' : ''}}加入我的最愛
+              </v-btn>
+              <v-btn
+                v-if="videoList[0]?.key"
+                variant="outlined"
+                prepend-icon="mdi mdi-movie-open-play"
+                color="secondary"
+                class="rounded mt-5 ml-5"
+                @click="isShowMovie = true"
+              >
+                電影預告片
+              </v-btn>
+            </div>
+          </v-col>
+          <v-col cols="12" lg="5">
+            <p class="text-title-large">名稱：{{detail.title}}</p>
+            <p class="text-title-large">概要：</p>
+            <p class="text-body-large">{{detail.overview}}</p>
+            <p class="text-title-large">語系：{{detail.original_language}}</p>
+            <p class="text-title-large">上映日期：{{detail.release_date}}</p>
+            <p class="text-title-large">分類標籤：</p>
+            <div>
+              <v-chip
+                class="mx-1 mb-3"
+                color="primary"
+                variant="flat"
+                v-for="chip in detail.genres"
+                :key="chip.id"
+              >
+                {{chip.name}}
+              </v-chip>
+            </div>
+          </v-col>
+          <v-col cols="12" lg="3">
+            <p class="text-title-large">影評得分</p>
+            <v-progress-circular
+              :model-value="progressBarLevel"
+              :size="200"
+              :width="15"
+              bg-color="surface-light"
+              class="ma-3"
+              color="orange-accent-2"
+              reveal
+              rounded
             >
-              {{isFavoriteMovie ? '已' : ''}}加入我的最愛
-            </v-btn>
-            <v-btn
-              v-if="videoList[0]?.key"
-              variant="outlined"
-              prepend-icon="mdi mdi-movie-open-play"
-              color="secondary"
-              class="rounded mt-5 ml-5"
-              @click="isShowMovie = true"
-            >
-              電影預告片
-            </v-btn>
-          </div>
-        </v-col>
-        <v-col cols="12" lg="5">
-          <p class="text-title-large">名稱：{{detail.title}}</p>
-          <p class="text-title-large">概要：</p>
-          <p class="text-body-large">{{detail.overview}}</p>
-          <p class="text-title-large">語系：{{detail.original_language}}</p>
-          <p class="text-title-large">上映日期：{{detail.release_date}}</p>
-          <p class="text-title-large">分類標籤：</p>
-          <div>
-            <v-chip
-              class="mx-1 mb-3"
-              color="primary"
-              variant="flat"
-              v-for="chip in detail.genres"
-              :key="chip.id"
-            >
-              {{chip.name}}
-            </v-chip>
-          </div>
-        </v-col>
-        <v-col cols="12" lg="3">
-          <p class="text-title-large">影評得分</p>
-          <v-progress-circular
-            :model-value="progressBarLevel"
-            :size="200"
-            :width="15"
-            bg-color="surface-light"
-            class="ma-3"
-            color="orange-accent-2"
-            reveal
-            rounded
-          >
-            <v-avatar color="surface-light" size="150" class="text-display-medium">{{ detail?.vote_average?.toFixed(2) || '0.00' }}</v-avatar>
-          </v-progress-circular>
-        </v-col>
-      </v-row>
-      <v-row
-        class="mt-10"
-        v-if="movieReviewList.length"
-      >
-        <v-col cols="12">
-          <p class="text-title-large my-0">評論區</p>
-        </v-col>
-        <v-col
-          v-for="(review, idx) in movieReviewList"
-          :key="idx"
-          cols="12"
-          lg="6"
+              <v-avatar color="surface-light" size="150" class="text-display-medium">{{ detail?.vote_average?.toFixed(2) || '0.00' }}</v-avatar>
+            </v-progress-circular>
+          </v-col>
+        </v-row>
+        <v-row
+          class="mt-10"
+          v-if="movieReviewList.length"
         >
-          <v-card
-            border="surface md"
-            class="
-              mx-auto
-              h-100
-              d-flex
-              flex-column
-              bg-background
-            "
-            elevation="4"
-            
+          <v-col cols="12">
+            <p class="text-title-large my-0">評論區</p>
+          </v-col>
+          <v-col
+            v-for="(review, idx) in movieReviewList"
+            :key="idx"
+            cols="12"
+            lg="6"
           >
-            <v-card-item>
-              <v-card-title>
-                {{review.author}}
-              </v-card-title>
-
-              <v-card-subtitle>
-                {{ review.updated_at }}
-              </v-card-subtitle>
-            </v-card-item>
-
-            <v-card-text>
-              <div class="multi-line-ellipsis">
-                {{ review.content }}
-              </div>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-      <v-row
-        class="mt-10"
-        v-if="imageList.length"
-      >
-        <v-col cols="12">
-          <p class="text-title-large my-0">電影海報</p>
-        </v-col>
-        <v-col
-          v-for="(img, idx) in imageList"
-          :key="idx"
-          cols="12"
-          lg="2"
+            <v-card
+              border="surface md"
+              class="
+                mx-auto
+                h-100
+                d-flex
+                flex-column
+                bg-background
+              "
+              elevation="4"
+              
+            >
+              <v-card-item>
+                <v-card-title>
+                  {{review.author}}
+                </v-card-title>
+  
+                <v-card-subtitle>
+                  {{ review.updated_at }}
+                </v-card-subtitle>
+              </v-card-item>
+  
+              <v-card-text>
+                <div class="multi-line-ellipsis">
+                  {{ review.content }}
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row
+          class="mt-10"
+          v-if="imageList.length"
         >
-          <img width="100%" :src="`https://image.tmdb.org/t/p/w500${img.file_path}`" alt="">
-        </v-col>
-      </v-row>
+          <v-col cols="12">
+            <p class="text-title-large my-0">電影海報</p>
+          </v-col>
+          <v-col
+            v-for="(img, idx) in imageList"
+            :key="idx"
+            cols="12"
+            lg="2"
+          >
+            <img width="100%" :src="`https://image.tmdb.org/t/p/w500${img.file_path}`" alt="">
+          </v-col>
+        </v-row>
     </v-container>
 
     <v-dialog
@@ -288,5 +280,17 @@ onMounted(() => {
   -webkit-line-clamp: 3;    /* 限制顯示的行數（例如：最多顯示 3 行） */
   -webkit-box-orient: vertical; /* 設定伸縮盒子的子元素排列方式 */
   overflow: hidden;         /* 隱藏超出邊框的文字 */
+}
+
+.bg-mask {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,rgba(252,252,252,0) 1%,rgba(0,0,0,1) 100%);
+}
+
+.detail-info {
+  position: relative;
+  z-index: 2;
+  margin-top: -300px;
 }
 </style>
