@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { useWindowSize } from '@/composables/useDeviceSize'
 import { useRouter } from 'vue-router'
 
+import SwitchBtn from './SwitchBtn.vue';
+
 const { isMobile } = useWindowSize()
 const router = useRouter()
 
@@ -23,8 +25,19 @@ const props = defineProps({
   pageName: {
     type: String,
     default: ''
+  },
+  showSwitchBtn: {
+    type: Boolean,
+    default: false
+  },
+  switchItem: {
+    type: Array,
+    default: () => ([])
   }
 })
+
+// emit
+const emit = defineEmits(['selectOption'])
 
 // data
 const selectedCard = ref(null)
@@ -39,11 +52,22 @@ const goToDetail = (id) => {
     params: { id }
   })
 }
+const selectOption = (e) => {
+  emit('selectOption', e)
+}
 </script>
 
 <template>
   <div>
-    <h1 class="pl-10 mb-0">{{ title }}</h1>
+    <div class="d-flex justify-space-between align-center">
+      <h1 class="pl-10 my-0 text-title-large">{{ title }}</h1>
+      <SwitchBtn
+        v-if="showSwitchBtn"
+        class="mr-10"
+        :switch-item="switchItem"
+        @selectOption="selectOption"
+      />
+    </div>
     <v-slide-group
       v-model="selectedCard"
       class="pa-4"

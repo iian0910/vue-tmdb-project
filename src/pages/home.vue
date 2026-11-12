@@ -60,6 +60,14 @@ const fetchPageData = async() => {
   }
 }
 
+const selectOption = (e) => {
+  const sessionID = sessionStorage.getItem('session_id')
+  
+  getTrendingMovie(sessionID, e).then(({data}) => {
+    trendingMovieList.value = data.results
+  })
+}
+
 // mounted
 onMounted(() => {
   getInfo()
@@ -74,32 +82,37 @@ onMounted(() => {
   />
   <div v-else>
     <MovieCarousel
+      class="mb-10"
       :move-list="nowList.slice(0, 10)"
     />
-    <v-container>
-      <MovieSlide
-        v-if="trendingMovieList.length"
-        title="本周發燒"
-        :movie-list="trendingMovieList.slice(0, 10)"
-      />
-      <MovieSlide
-        v-if="movieList.length"
-        title="熱門電影"
-        :movie-list="movieList.slice(0, 10)"
-      />
-      <MovieSlide
-        v-if="topRateList.length"
-        title="經典神作推薦"
-        :movie-list="topRateList.slice(0, 10)"
-        :page-name="'/topRateMovieList'"
-        showMore
-      />
-      <MovieSlide
-        v-if="favoriteList.length"
-        title="我的最愛"
-        :movie-list="favoriteList.slice(0, 10)"
-      />
-    </v-container>
+    <MovieSlide
+      v-if="trendingMovieList.length"
+      title="發燒電影"
+      :movie-list="trendingMovieList.slice(0, 10)"
+      :switch-item="[
+        { label: '本周', value: 'week' },
+        { label: '今日', value: 'day' },
+      ]"
+      show-switch-btn
+      @selectOption="selectOption"
+    />
+    <MovieSlide
+      v-if="movieList.length"
+      title="熱門電影"
+      :movie-list="movieList.slice(0, 10)"
+    />
+    <MovieSlide
+      v-if="topRateList.length"
+      title="經典神作推薦"
+      :movie-list="topRateList.slice(0, 10)"
+      :page-name="'/topRateMovieList'"
+      showMore
+    />
+    <MovieSlide
+      v-if="favoriteList.length"
+      title="我的最愛"
+      :movie-list="favoriteList.slice(0, 10)"
+    />
   </div>
 </template>
 
