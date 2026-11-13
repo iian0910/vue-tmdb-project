@@ -11,26 +11,36 @@ const router = createRouter({
       meta: {
         hideFooter: true,
         hideHeader: true,
-        requiresAuth: false
+        requiresAuth: false,
+        title: '登入'
       }
     },
     {
       path: '/',
       name: 'Home',
       component: () => import('@/pages/home.vue'),
-      meta: { requiresAuth: true }
+      meta: {
+        requiresAuth: true,
+        title: '首頁'
+      }
     },
     {
       path: '/topRateMovieList',
       name: 'TopRateMovie',
       component: () => import('@/pages/topRateMovie.vue'),
-      meta: { requiresAuth: true }
+      meta: {
+        requiresAuth: true,
+        title: '發燒電影'
+      }
     },
     {
       path: '/movie/:id',
       name: 'MovieDetailInfo',
       component: () => import('@/pages/movieDetailInfo.vue'),
-      meta: { requiresAuth: true }
+      meta: {
+        requiresAuth: true,
+        title: '電影詳情'
+      }
     }
   ],
 })
@@ -50,6 +60,11 @@ router.beforeEach((to, from) => {
   }
 
   return true
+})
+
+router.afterEach((to) => {
+  const baseTitle = 'TMDB 電影館'
+  document.title = to.meta.title ? `${to.meta.title} | ${baseTitle}` : baseTitle
 })
 
 export default router

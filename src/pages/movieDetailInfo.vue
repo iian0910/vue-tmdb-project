@@ -7,7 +7,7 @@ import {
   getMovieVideo,
   getMovieReviewsList
 } from '@/api/tmdb'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useWindowSize } from '@/composables/useDeviceSize'
 import { formatLanguage } from '@/util/languageCode.js'
@@ -86,6 +86,16 @@ const updateMovieDetail = async(id) => {
     isBtnLoading.value = false
   }
 }
+
+// watch
+watch(
+  () => detail.value?.title,
+  (newTitle) => {
+    if (newTitle) {
+      document.title = `${newTitle} | TMDB 電影館`
+    }
+  }
+)
 
 // mounted
 onMounted(() => {
