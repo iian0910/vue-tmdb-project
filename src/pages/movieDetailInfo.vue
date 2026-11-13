@@ -9,11 +9,13 @@ import {
 } from '@/api/tmdb'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { useWindowSize } from '@/composables/useDeviceSize'
 
 import BackPage from '../components/BackPage.vue'
 import PageLoading from '@/components/PageLoading.vue'
 
 const route = useRoute()
+const { isMobile } = useWindowSize()
 
 // data
 const detail = ref({})
@@ -107,7 +109,7 @@ onMounted(() => {
     <v-container class="detail-info">
         <BackPage v-if="!isLoading"/>
         <v-row>
-          <v-col cols="12" lg="4">
+          <v-col cols="12" lg="4" v-if="!isMobile">
             <img width="100%" :src="`https://image.tmdb.org/t/p/w500${detail.poster_path}`" :alt="detail.title">
             <div class="d-flex">
               <v-btn
@@ -149,6 +151,30 @@ onMounted(() => {
               >
                 {{chip.name}}
               </v-chip>
+            </div>
+          </v-col>
+          <v-col cols="12" v-if="isMobile">
+            <div class="d-flex">
+              <v-btn
+                :variant="isFavoriteMovie ? 'elevated' : 'outlined'"
+                :prepend-icon="isFavoriteMovie ? 'mdi mdi-heart' : 'mdi mdi-heart-outline'"
+                color="pink-lighten-3"
+                class="rounded mt-5"
+                @click="favoriteStatus(detail.id)"
+                :loading="isBtnLoading"
+              >
+                {{isFavoriteMovie ? '已' : ''}}加入我的最愛
+              </v-btn>
+              <v-btn
+                v-if="videoList[0]?.key"
+                variant="outlined"
+                prepend-icon="mdi mdi-movie-open-play"
+                color="secondary"
+                class="rounded mt-5 ml-5"
+                @click="isShowMovie = true"
+              >
+                電影預告片
+              </v-btn>
             </div>
           </v-col>
           <v-col cols="12" lg="3">
