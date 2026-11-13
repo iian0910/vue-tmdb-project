@@ -10,6 +10,7 @@ import {
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useWindowSize } from '@/composables/useDeviceSize'
+import { formatLanguage } from '@/util/languageCode.js'
 
 import BackPage from '../components/BackPage.vue'
 import PageLoading from '@/components/PageLoading.vue'
@@ -138,7 +139,7 @@ onMounted(() => {
             <p class="text-title-large">名稱：{{detail.title}}</p>
             <p class="text-title-large">概要：</p>
             <p class="text-body-large">{{detail.overview}}</p>
-            <p class="text-title-large">語系：{{detail.original_language}}</p>
+            <p class="text-title-large">語系：{{formatLanguage(detail.original_language)}}</p>
             <p class="text-title-large">上映日期：{{detail.release_date}}</p>
             <p class="text-title-large">分類標籤：</p>
             <div>
